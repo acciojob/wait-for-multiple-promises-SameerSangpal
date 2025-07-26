@@ -23,11 +23,77 @@
       <tbody id="output"></tbody>
     </table>
 
+<script>
+function createRandomPromise(index) {
+  const delay = Math.random() * 2 + 1; // 1 to 3 seconds
+  const start = performance.now();
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const end = performance.now();
+      const timeTaken = ((end - start) / 1000).toFixed(3);
+      resolve({ name: `Promise ${index}`, time: parseFloat(timeTaken) });
+    }, delay * 1000);
+  });
+}
+
+const output = document.getElementById("output");
+
+// Add initial loading row
+const loadingRow = document.createElement("tr");
+loadingRow.id = "loading-row";
+const loadingCell = document.createElement("td");
+loadingCell.setAttribute("colspan", "2");
+loadingCell.textContent = "Loading...";
+loadingRow.appendChild(loadingCell);
+output.appendChild(loadingRow);
+
+// Create and resolve all promises
+const promises = [
+  createRandomPromise(1),
+  createRandomPromise(2),
+  createRandomPromise(3)
+];
+
+Promise.all(promises).then((results) => {
+  // Remove loading row
+  document.getElementById("loading-row")?.remove();
+
+  let maxTime = 0;
+
+  results.forEach((result) => {
+    const row = document.createElement("tr");
+
+    const nameCell = document.createElement("td");
+    nameCell.textContent = result.name;
+
+    const timeCell = document.createElement("td");
+    timeCell.textContent = result.time.toFixed(3);
+
+    row.appendChild(nameCell);
+    row.appendChild(timeCell);
+    output.appendChild(row);
+
+    if (result.time > maxTime) {
+      maxTime = result.time;
+    }
+  });
+
+  // Add total row
+  const totalRow = document.createElement("tr");
+
+  const totalLabelCell = document.createElement("td");
+  totalLabelCell.textContent = "Total";
+
+  const totalTimeCell = document.createElement("td");
+  totalTimeCell.textContent = maxTime.toFixed(3);
+
+  totalRow.appendChild(totalLabelCell);
+  totalRow.appendChild(totalTimeCell);
+  output.appendChild(totalRow);
+});
+  </script>
     <script type="text/javascript" src="./script.js"></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
   </body>
 </html>
